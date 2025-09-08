@@ -773,11 +773,9 @@ class KeywordChecker(Instruction):
 
   def check_following(self, value):
     """Check if the response contain the expected keywords."""
-    tokens = ja_instructions_util.tokenizing_texts(value)
-    val_words = [token.surface for token in tokens]
 
     for keyword in self._keywords:
-      if not keyword in val_words:
+      if not keyword in value:
         return False
     return True
 
@@ -840,10 +838,7 @@ class KeywordFrequencyChecker(Instruction):
 
   def check_following(self, value):
     """Checks if the response contain the keyword with required frequency."""
-    tokens = ja_instructions_util.tokenizing_texts(value)
-    val_words = [token.surface for token in tokens]
-    dict_val = collections.Counter(val_words)
-    actual_occurrences = dict_val[self._keyword]
+    actual_occurrences = value.count(self._keyword)
 
     if self._comparison_relation == _COMPARISON_RELATION[0]:
       return actual_occurrences < self._frequency
@@ -1134,10 +1129,8 @@ class ForbiddenWords(Instruction):
 
   def check_following(self, value):
     """Check if the response does not contain the expected keywords."""
-    tokens = ja_instructions_util.tokenizing_texts(value)
-    words = [token.surface for token in tokens]
     for word in self._forbidden_words:
-      if word in words:
+      if word in value:
         return False
     return True
 
